@@ -17,12 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chessboard.cpp \
+    chesspiece.cpp \
     main.cpp \
     chessgui.cpp
 
 HEADERS += \
     chessboard.h \
-    chessgui.h
+    chessgui.h \
+    chesspiece.h
 
 FORMS += \
     chessgui.ui

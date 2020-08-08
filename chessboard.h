@@ -6,7 +6,12 @@
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 
+#include "chesspiece.h"
+
 #include <QWidget>
+
+/*---------------------------------------------------------------------------*/
+#define TOTAL_PIECE_NUM 32
 
 /*---------------------------------------------------------------------------*/
 class ChessBoard : public QWidget
@@ -17,6 +22,9 @@ public:
 
     void paintEvent(QPaintEvent * event);
     void mousePressEvent(QMouseEvent* event);
+private:
+    void initilizePieces();
+    ChessPiece chessPieces[TOTAL_PIECE_NUM];
 signals:
 
 };
