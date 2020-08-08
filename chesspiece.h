@@ -47,15 +47,20 @@ public:
     void setPieceInfo(uint8_t x, uint8_t y, uint8_t type, bool isWhite);
     uint8_t x();
     uint8_t y();
-    uint8_t yInvert();
+    bool isMoved();
     bool onBoard();
+    bool isWhite();
     uint8_t point();
+    uint8_t type();
+    void remove();
+    void setPosition(uint8_t x, uint8_t y);
     QImage getImage();
 private:
     uint8_t xVar; // 0 .. 7 -> A .. H
     uint8_t yVar; // 0 .. 7 -> 1 .. 8
-    uint8_t type;
-    bool isWhite;
+    uint8_t typeVar;
+    bool isMovedVar;
+    bool isWhiteVar;
     bool onBoardVar;
 };
 

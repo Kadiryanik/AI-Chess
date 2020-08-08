@@ -11,8 +11,8 @@
 #include <QWidget>
 
 /*---------------------------------------------------------------------------*/
-#define GUI_SIZE_X 512
-#define GUI_SIZE_Y 512
+#define GUI_SIZE_WIDTH  512
+#define GUI_SIZE_HEIGHT 512
 
 /*---------------------------------------------------------------------------*/
 QT_BEGIN_NAMESPACE
