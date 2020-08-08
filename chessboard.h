@@ -1,3 +1,8 @@
+/*
+ * ChessBoard Class
+ *
+ * Copyright (C) Kadir Yanık - <kdrynkk@gmail.com>, 2020
+ */
 #ifndef CHESSBOARD_H
 #define CHESSBOARD_H
 

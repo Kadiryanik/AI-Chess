@@ -1,3 +1,8 @@
+/*
+ * ChessBoard Class
+ *
+ * Copyright (C) Kadir Yanık - <kdrynkk@gmail.com>, 2020
+ */
 #include "chessboard.h"
 
 #include <QPainter>

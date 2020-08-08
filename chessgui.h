@@ -1,3 +1,8 @@
+/*
+ * ChessGui Class
+ *
+ * Copyright (C) Kadir Yanık - <kdrynkk@gmail.com>, 2020
+ */
 #ifndef CHESSGUI_H
 #define CHESSGUI_H
 
@@ -25,6 +30,6 @@ public:
 
 private:
     Ui::ChessGui *ui;
-    ChessBoard* chessBoard;
+    ChessBoard *chessBoard;
 };
 #endif // CHESSGUI_H

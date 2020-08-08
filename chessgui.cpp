@@ -1,3 +1,8 @@
+/*
+ * ChessGui Class
+ *
+ * Copyright (C) Kadir Yanık - <kdrynkk@gmail.com>, 2020
+ */
 #include "chessgui.h"
 #include "ui_chessgui.h"
 
