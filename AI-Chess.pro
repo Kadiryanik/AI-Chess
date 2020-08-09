@@ -19,12 +19,16 @@ SOURCES += \
     chessboard.cpp \
     chesspiece.cpp \
     main.cpp \
-    chessgui.cpp
+    chessgui.cpp \
+    move.cpp \
+    stack.cpp
 
 HEADERS += \
     chessboard.h \
     chessgui.h \
-    chesspiece.h
+    chesspiece.h \
+    move.h \
+    stack.h
 
 FORMS += \
     chessgui.ui

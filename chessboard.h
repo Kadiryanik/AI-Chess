@@ -7,20 +7,16 @@
 #define CHESSBOARD_H
 
 #include "chesspiece.h"
+#include "stack.h"
+#include "move.h"
 
 #include <QWidget>
 
 /*---------------------------------------------------------------------------*/
 #define TOTAL_PIECE_NUM   32
-#define MAX_POSSIBLE_MOVE 27
-#define BOARD_MATRIX_SIZE 8 // same row & column
+#define MAX_POSSIBLE_MOVE 27 // queen has 27(biggest) legal move
+#define BOARD_MATRIX_SIZE 8  // same row & column
 #define INVERTING_OFFSET  (BOARD_MATRIX_SIZE - 1)
-
-/*---------------------------------------------------------------------------*/
-typedef struct{
-    uint8_t x;
-    uint8_t y;
-} pos_t;
 
 /*---------------------------------------------------------------------------*/
 class ChessBoard : public QWidget
@@ -28,24 +24,37 @@ class ChessBoard : public QWidget
     Q_OBJECT
 public:
     explicit ChessBoard(QWidget *parent = nullptr);
-
+    ~ChessBoard();
     void paintEvent(QPaintEvent * event);
     void mousePressEvent(QMouseEvent* event);
 private:
     void initilizePieces();
-    // holds the indexes
-    int8_t boardMatrix[BOARD_MATRIX_SIZE][BOARD_MATRIX_SIZE];
-    // piece properties
-    ChessPiece chessPieces[TOTAL_PIECE_NUM];
+    // moving functions
+    uint8_t getAllMoves(Move *moves);
+    uint8_t prepareLegalMoves(Move *moves);
+    uint8_t fillStraightMoves(Move *moves);
+    uint8_t fillCrossMoves(Move *moves);
+    void makeMove(Move move);
+    void undoLastMove();
+    // ai functions
+    void makeAIMove();
+    int getRating();
+    int minimax(int depth, int alpha, int beta, bool maximizing);
 
-    // for moving pieces
-    void fillPossibleMoves();
-    void fillStraightMoves();
-    void fillCrossMoves();
+    Stack<Move> *movePool;
+    ChessPiece chessPieces[TOTAL_PIECE_NUM]; // piece properties
+    // holds the indexes in chessPieces array
+    int8_t boardMatrix[BOARD_MATRIX_SIZE][BOARD_MATRIX_SIZE];
+
+    // array used instead of linked list for improving performance
+    Move legalMoves[MAX_POSSIBLE_MOVE];
+    int legalMoveCount;
+    
+    // holds the best move in minimax search
+    Move bestMove;
+
+    bool movementSide;
     int8_t selectedIndex;
-    // array used for improving performance
-    pos_t possibleMoves[MAX_POSSIBLE_MOVE];
-    uint8_t possibleMoveCount;
 signals:
 
 };

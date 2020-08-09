@@ -12,12 +12,12 @@ ChessPiece::ChessPiece()
 }
 
 /*---------------------------------------------------------------------------*/
-void ChessPiece::setPieceInfo(uint8_t x, uint8_t y, uint8_t type, bool isWhite)
+void ChessPiece::setPieceInfo(uint8_t x, uint8_t y, uint8_t type, bool side)
 {
     this->xVar = x;
     this->yVar = y;
     this->typeVar = type;
-    this->isWhiteVar = isWhite;
+    this->sideVar = side;
     this->onBoardVar = true;
 }
 
@@ -46,32 +46,38 @@ bool ChessPiece::onBoard()
 }
 
 /*---------------------------------------------------------------------------*/
-bool ChessPiece::isWhite()
+bool ChessPiece::side()
 {
-    return this->isWhiteVar;
+    return this->sideVar;
 }
 
 /*---------------------------------------------------------------------------*/
-uint8_t ChessPiece::point(){
-    int ret = -1;
-    if(isWhiteVar){
-        ret = 1;
+int8_t ChessPiece::point(){
+    int8_t ret = 1;
+    if(this->sideVar == SIDE_BLACK){
+        ret = -1;
     }
-
     switch(this->typeVar){
         case PIECE_BISHOP:
             ret *= PIECE_POINT_BISHOP;
+            break;
         case PIECE_KING:
             ret *= PIECE_POINT_KING;
+            break;
         case PIECE_KNIGHT:
             ret *= PIECE_POINT_KNIGHT;
+            break;
         case PIECE_PAWN:
             ret *= PIECE_POINT_PAWN;
+            break;
         case PIECE_QUEEN:
             ret *= PIECE_POINT_QUEEN;
+            break;
         case PIECE_ROOK:
             ret *= PIECE_POINT_ROOK;
+            break;
     }
+
     return ret;
 }
 
@@ -81,8 +87,8 @@ uint8_t ChessPiece::type(){
 }
 
 /*---------------------------------------------------------------------------*/
-void ChessPiece::remove(){
-    this->onBoardVar = false;
+void ChessPiece::setOnBoard(bool flag){
+    this->onBoardVar = flag;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -96,7 +102,7 @@ void ChessPiece::setPosition(uint8_t x, uint8_t y){
 /*---------------------------------------------------------------------------*/
 QImage ChessPiece::getImage()
 {
-    if(this->isWhiteVar){
+    if(this->sideVar){
         switch(this->typeVar){
             case PIECE_BISHOP:
                 return QImage(PIECE_W_BISHOP);

@@ -40,19 +40,23 @@
 #define PIECE_POINT_KING   50
 
 /*---------------------------------------------------------------------------*/
+#define SIDE_BLACK false
+#define SIDE_WHITE true
+
+/*---------------------------------------------------------------------------*/
 class ChessPiece
 {
 public:
     ChessPiece();
-    void setPieceInfo(uint8_t x, uint8_t y, uint8_t type, bool isWhite);
+    void setPieceInfo(uint8_t x, uint8_t y, uint8_t type, bool side);
     uint8_t x();
     uint8_t y();
     bool isMoved();
     bool onBoard();
-    bool isWhite();
-    uint8_t point();
+    bool side();
+    int8_t point();
     uint8_t type();
-    void remove();
+    void setOnBoard(bool flag);
     void setPosition(uint8_t x, uint8_t y);
     QImage getImage();
 private:
@@ -60,7 +64,7 @@ private:
     uint8_t yVar; // 0 .. 7 -> 1 .. 8
     uint8_t typeVar;
     bool isMovedVar;
-    bool isWhiteVar;
+    bool sideVar;
     bool onBoardVar;
 };
 

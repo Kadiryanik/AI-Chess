@@ -6,7 +6,6 @@
 #include "chessgui.h"
 #include "ui_chessgui.h"
 
-
 #include <QDesktopWidget>
 #include <QSizePolicy>
 #include <QStyle>
