@@ -57,7 +57,9 @@ private:
 
     // notation and game over functions
     QString getNotation(Move *move);
+    void askForNewPiece();
     void gameOver();
+
 
     Stack<Move> *movePool;
     ChessPiece chessPieces[TOTAL_PIECE_NUM]; // piece properties

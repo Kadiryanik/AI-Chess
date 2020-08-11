@@ -13,6 +13,8 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QCoreApplication>
+#include <QMessageBox>
+#include <QPushButton>
 
 /*---------------------------------------------------------------------------*/
 #define CB_EACH_BOX_SIZE           64
@@ -171,7 +173,7 @@ void ChessBoard::paintEvent(QPaintEvent *event)
         y = CB_SIZE;
         painter.drawText(x, y, QString(boardColumnNames[i]));
     }
-    // TODO: write texts 1..8 & A..H
+
     painter.restore();
 }
 
@@ -223,6 +225,13 @@ void ChessBoard::mousePressEvent(QMouseEvent *event)
         for(uint8_t i = 0; i < legalMoveCount; i++){
             if(legalMoves[i].to.x == x && legalMoves[i].to.y == y){
                 makeMove(legalMoves[i]);
+
+                if((legalMoves[i].to.y == 0 || \
+                    legalMoves[i].to.y == BOARD_MATRIX_SIZE - 1) && \
+                   chessPieces[selectedIndex].type() == PIECE_PAWN){
+                    askForNewPiece();
+                }
+
                 ((ChessGui *)parentWidget())->\
                         setNotation(getNotation(&legalMoves[i]), \
                                     !movementSide);
@@ -724,9 +733,6 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
      // set old position as not in use
      boardInfo[move.from.x][move.from.y].index = -1;
 
-     // TODO: if piece is pawn and reached end of the board
-     // change piece.
-
      if(turnSide){
          // turn the side
          movementSide = !movementSide;
@@ -738,6 +744,14 @@ void ChessBoard::makeAIMove()
 {
     minimax(AI_SEARCH_DEPTH, INT_MIN, INT_MAX, true);
     makeMove(bestMove);
+
+    if((bestMove.to.y == 0 || \
+        bestMove.to.y == BOARD_MATRIX_SIZE - 1) && \
+       chessPieces[boardInfo[bestMove.to.x][bestMove.to.y].index].type() == \
+            PIECE_PAWN){
+        chessPieces[boardInfo[bestMove.to.x][bestMove.to.y].index]\
+                .setType(PIECE_QUEEN);
+    }
 
     ((ChessGui *)parentWidget())->setNotation(getNotation(&bestMove), \
                                               !movementSide);
@@ -828,6 +842,41 @@ QString ChessBoard::getNotation(Move *move)
             .append("-").append(boardColumnNames[move->to.x])\
             .append(QString::number(move->to.y));
     return notation;
+}
+
+/*---------------------------------------------------------------------------*/
+void ChessBoard::askForNewPiece()
+{
+    QMessageBox *msgBox = new QMessageBox(this);
+    msgBox->setWindowTitle("Select the piece you want!");
+
+    QPushButton *queen = msgBox->addButton(tr(""), QMessageBox::ActionRole);
+    queen->setIcon(QIcon(QPixmap(PIECE_W_QUEEN)));
+    queen->setIconSize(QSize(CB_EACH_BOX_SIZE, CB_EACH_BOX_SIZE));
+
+    QPushButton *rook = msgBox->addButton(tr(""), QMessageBox::ActionRole);
+    rook->setIcon(QIcon(QPixmap(PIECE_W_ROOK)));
+    rook->setIconSize(QSize(CB_EACH_BOX_SIZE, CB_EACH_BOX_SIZE));
+
+    QPushButton *knight = msgBox->addButton(tr(""), QMessageBox::ActionRole);
+    knight->setIcon(QIcon(QPixmap(PIECE_W_KNIGHT)));
+    knight->setIconSize(QSize(CB_EACH_BOX_SIZE, CB_EACH_BOX_SIZE));
+
+    QPushButton *bishop = msgBox->addButton(tr(""), QMessageBox::ActionRole);
+    bishop->setIcon(QIcon(QPixmap(PIECE_W_BISHOP)));
+    bishop->setIconSize(QSize(CB_EACH_BOX_SIZE, CB_EACH_BOX_SIZE));
+
+    msgBox->exec();
+
+    if(msgBox->clickedButton() == rook){
+       chessPieces[selectedIndex].setType(PIECE_ROOK);
+    } else if(msgBox->clickedButton() == knight){
+        chessPieces[selectedIndex].setType(PIECE_KNIGHT);
+    } else if(msgBox->clickedButton() == bishop){
+        chessPieces[selectedIndex].setType(PIECE_BISHOP);
+    } else{
+        chessPieces[selectedIndex].setType(PIECE_QUEEN);
+    }
 }
 
 /*---------------------------------------------------------------------------*/

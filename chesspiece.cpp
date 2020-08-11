@@ -100,6 +100,12 @@ void ChessPiece::setOnBoard(bool flag){
 }
 
 /*---------------------------------------------------------------------------*/
+void ChessPiece::setType(uint8_t type)
+{
+    this->typeVar = type;
+}
+
+/*---------------------------------------------------------------------------*/
 QImage ChessPiece::getImage()
 {
     if(this->sideVar){

@@ -58,6 +58,7 @@ public:
     uint8_t type();
     void setPosition(uint8_t x, uint8_t y);
     void setOnBoard(bool flag);
+    void setType(uint8_t type);
     QImage getImage();
 private:
     uint8_t xVar; // 0 .. 7 -> A .. H
