@@ -87,16 +87,16 @@ uint8_t ChessPiece::type(){
 }
 
 /*---------------------------------------------------------------------------*/
-void ChessPiece::setOnBoard(bool flag){
-    this->onBoardVar = flag;
-}
-
-/*---------------------------------------------------------------------------*/
 void ChessPiece::setPosition(uint8_t x, uint8_t y){
     this->xVar = x;
     this->yVar = y;
 
     this->isMovedVar = true;
+}
+
+/*---------------------------------------------------------------------------*/
+void ChessPiece::setOnBoard(bool flag){
+    this->onBoardVar = flag;
 }
 
 /*---------------------------------------------------------------------------*/

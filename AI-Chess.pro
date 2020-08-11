@@ -17,9 +17,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chessboard.cpp \
+    chessgui.cpp \
     chesspiece.cpp \
     main.cpp \
-    chessgui.cpp \
     move.cpp \
     stack.cpp
 

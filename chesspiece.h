@@ -56,16 +56,16 @@ public:
     bool side();
     int8_t point();
     uint8_t type();
-    void setOnBoard(bool flag);
     void setPosition(uint8_t x, uint8_t y);
+    void setOnBoard(bool flag);
     QImage getImage();
 private:
     uint8_t xVar; // 0 .. 7 -> A .. H
     uint8_t yVar; // 0 .. 7 -> 1 .. 8
     uint8_t typeVar;
     bool isMovedVar;
-    bool sideVar;
     bool onBoardVar;
+    bool sideVar;
 };
 
 #endif // CHESSPIECE_H

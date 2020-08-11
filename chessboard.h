@@ -19,6 +19,12 @@
 #define INVERTING_OFFSET  (BOARD_MATRIX_SIZE - 1)
 
 /*---------------------------------------------------------------------------*/
+typedef struct {
+    int8_t index;
+    uint8_t pressure;
+} boardInfo_t;
+
+/*---------------------------------------------------------------------------*/
 class ChessBoard : public QWidget
 {
     Q_OBJECT
@@ -29,22 +35,30 @@ public:
     void mousePressEvent(QMouseEvent* event);
 private:
     void initilizePieces();
+    void updatePressures(uint8_t (*pressures)[BOARD_MATRIX_SIZE] = nullptr);
+    bool isKingUnderPressure(uint8_t (*pressures)[BOARD_MATRIX_SIZE] = \
+            nullptr);
+    bool checkKingPressure(Move *move);
     // moving functions
-    uint8_t getAllMoves(Move *moves);
-    uint8_t prepareLegalMoves(Move *moves);
-    uint8_t fillStraightMoves(Move *moves);
-    uint8_t fillCrossMoves(Move *moves);
-    void makeMove(Move move);
-    void undoLastMove();
+    uint8_t getAllMoves(Move *moves, bool pressureChecking = false);
+    uint8_t prepareLegalMoves(ChessPiece piece, Move *moves, \
+                              bool pressureChecking = false);
+    uint8_t fillStraightMoves(ChessPiece piece, Move *moves, \
+                              bool pressureChecking = false);
+    uint8_t fillCrossMoves(ChessPiece piece, Move *moves, \
+                           bool pressureChecking = false);
+    void makeMove(Move move, bool turnSide = true);
+    void undoLastMove(bool turnSide = true);
     // ai functions
     void makeAIMove();
-    int getRating();
+    int getRating(bool maximizing);
     int minimax(int depth, int alpha, int beta, bool maximizing);
+    void gameOver();
 
     Stack<Move> *movePool;
     ChessPiece chessPieces[TOTAL_PIECE_NUM]; // piece properties
     // holds the indexes in chessPieces array
-    int8_t boardMatrix[BOARD_MATRIX_SIZE][BOARD_MATRIX_SIZE];
+    boardInfo_t boardInfo[BOARD_MATRIX_SIZE][BOARD_MATRIX_SIZE];
 
     // array used instead of linked list for improving performance
     Move legalMoves[MAX_POSSIBLE_MOVE];
@@ -55,6 +69,10 @@ private:
 
     bool movementSide;
     int8_t selectedIndex;
+
+    // for easy access
+    uint8_t whiteKingIndex;
+    uint8_t blackKingIndex;
 signals:
 
 };
