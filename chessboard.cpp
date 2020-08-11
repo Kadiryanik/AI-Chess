@@ -5,6 +5,7 @@
  */
 #include "chessboard.h"
 #include "chesspiece.h"
+#include "chessgui.h"
 
 // for template defination linkage
 #include "stack.cpp"
@@ -60,6 +61,8 @@ const int8_t kingMovementOffsets[MOVEMENT_NUM][POSITION_DEPTH] = {
   { 1, 0 },
   { 1, 1 }
 };
+
+const char boardColumnNames[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
 
 /*---------------------------------------------------------------------------*/
 ChessBoard::ChessBoard(QWidget *parent) : QWidget(parent)
@@ -159,8 +162,43 @@ void ChessBoard::paintEvent(QPaintEvent *event)
         }
     }
 
+    for(uint8_t i = 0; i < BOARD_MATRIX_SIZE; i++){
+        int x = 0;
+        int y = (CB_EACH_BOX_SIZE / 2) + (i * CB_EACH_BOX_SIZE) + 4;
+        painter.drawText(x, y, QString(QString::number(INVERTING_OFFSET - i)));
+
+        x = (CB_EACH_BOX_SIZE / 2) + (i * CB_EACH_BOX_SIZE) - 4;
+        y = CB_SIZE;
+        painter.drawText(x, y, QString(boardColumnNames[i]));
+    }
     // TODO: write texts 1..8 & A..H
     painter.restore();
+}
+
+/*---------------------------------------------------------------------------*/
+void ChessBoard::undoLastMove(bool turnSide)
+{
+    Move move;
+    if(movePool->pop(&move)){
+        int8_t movedPieceIndex = boardInfo[move.to.x][move.to.y].index;
+
+        // move back the piece
+        chessPieces[movedPieceIndex] = move.movedPiece;
+        boardInfo[move.from.x][move.from.y].index = movedPieceIndex;
+
+        // get the eaten piece back if exist
+        if(move.pieceWasEaten){
+            chessPieces[move.eatenPieceIndex].setOnBoard(true);
+            boardInfo[move.to.x][move.to.y].index = move.eatenPieceIndex;
+        } else{
+            boardInfo[move.to.x][move.to.y].index = -1;
+        }
+
+        if(turnSide){
+            // turn the side
+            movementSide = !movementSide;
+        }
+    }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -185,6 +223,9 @@ void ChessBoard::mousePressEvent(QMouseEvent *event)
         for(uint8_t i = 0; i < legalMoveCount; i++){
             if(legalMoves[i].to.x == x && legalMoves[i].to.y == y){
                 makeMove(legalMoves[i]);
+                ((ChessGui *)parentWidget())->\
+                        setNotation(getNotation(&legalMoves[i]), \
+                                    !movementSide);
                 updatePressures();
                 break;
             }
@@ -517,7 +558,11 @@ uint8_t ChessBoard::fillCrossMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, j);
@@ -530,7 +575,11 @@ uint8_t ChessBoard::fillCrossMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, j);
@@ -544,7 +593,11 @@ uint8_t ChessBoard::fillCrossMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, j);
@@ -558,7 +611,11 @@ uint8_t ChessBoard::fillCrossMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, j);
@@ -582,7 +639,11 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][y].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, y);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][y].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][y].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, y);
@@ -595,7 +656,11 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[i][y].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, i, y);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[i][y].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[i][y].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, i, y);
@@ -608,7 +673,11 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[x][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, x, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[x][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[x][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, x, j);
@@ -621,7 +690,11 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
                chessPieces[boardInfo[x][j].index].side() != piece.side()){
                 moves[moveCount++].setPositions(x, y, x, j);
             }
-            break;
+            if(!(pressureChecking && \
+               chessPieces[boardInfo[x][j].index].type() == PIECE_KING && \
+               chessPieces[boardInfo[x][j].index].side() != piece.side())){
+                break;
+            }
         }
 
         moves[moveCount++].setPositions(x, y, x, j);
@@ -661,36 +734,13 @@ uint8_t ChessBoard::fillStraightMoves(ChessPiece piece, Move *moves, \
  }
 
 /*---------------------------------------------------------------------------*/
-void ChessBoard::undoLastMove(bool turnSide)
-{
-    Move move;
-    if(movePool->pop(&move)){
-        int8_t movedPieceIndex = boardInfo[move.to.x][move.to.y].index;
-
-        // move back the piece
-        chessPieces[movedPieceIndex] = move.movedPiece;
-        boardInfo[move.from.x][move.from.y].index = movedPieceIndex;
-
-        // get the eaten piece back if exist
-        if(move.pieceWasEaten){
-            chessPieces[move.eatenPieceIndex].setOnBoard(true);
-            boardInfo[move.to.x][move.to.y].index = move.eatenPieceIndex;
-        } else{
-            boardInfo[move.to.x][move.to.y].index = -1;
-        }
-
-        if(turnSide){
-            // turn the side
-            movementSide = !movementSide;
-        }
-    }
-}
-
-/*---------------------------------------------------------------------------*/
 void ChessBoard::makeAIMove()
 {
     minimax(AI_SEARCH_DEPTH, INT_MIN, INT_MAX, true);
     makeMove(bestMove);
+
+    ((ChessGui *)parentWidget())->setNotation(getNotation(&bestMove), \
+                                              !movementSide);
 
     updatePressures();
     this->repaint();
@@ -707,9 +757,13 @@ void ChessBoard::makeAIMove()
 /*---------------------------------------------------------------------------*/
 int ChessBoard::getRating(bool maximizing)
 {
+    // TODO: improve board rating calculation.
     int sum = 0;
     for(uint8_t i = 0; i < TOTAL_PIECE_NUM; i++){
-        if(chessPieces[i].onBoard()){
+        if(chessPieces[i].type() == PIECE_KING){
+            sum += chessPieces[i].point() * (boardInfo[chessPieces[i].x()]\
+                    [chessPieces[i].y()].pressure * 10);
+        } else if(chessPieces[i].onBoard()){
             sum += chessPieces[i].point();
         }
     }
@@ -762,6 +816,18 @@ int ChessBoard::minimax(int depth, int alpha, int beta, bool maximizing)
         }
         return beta;
     }
+}
+
+/*---------------------------------------------------------------------------*/
+QString ChessBoard::getNotation(Move *move)
+{
+    // TODO: return full notation
+    QString notation = "";
+    notation.append(boardColumnNames[move->from.x])\
+            .append(QString::number(move->from.y))\
+            .append("-").append(boardColumnNames[move->to.x])\
+            .append(QString::number(move->to.y));
+    return notation;
 }
 
 /*---------------------------------------------------------------------------*/

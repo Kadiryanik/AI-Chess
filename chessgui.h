@@ -11,7 +11,7 @@
 #include <QWidget>
 
 /*---------------------------------------------------------------------------*/
-#define GUI_SIZE_WIDTH  512
+#define GUI_SIZE_WIDTH  768
 #define GUI_SIZE_HEIGHT 512
 
 /*---------------------------------------------------------------------------*/
@@ -27,6 +27,10 @@ class ChessGui : public QWidget
 public:
     ChessGui(QWidget *parent = nullptr);
     ~ChessGui();
+    void setNotation(QString notation, bool side);
+
+private slots:
+    void on_undoButton_clicked();
 
 private:
     Ui::ChessGui *ui;

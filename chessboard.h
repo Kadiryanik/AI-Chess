@@ -33,6 +33,8 @@ public:
     ~ChessBoard();
     void paintEvent(QPaintEvent * event);
     void mousePressEvent(QMouseEvent* event);
+
+    void undoLastMove(bool turnSide = true);
 private:
     void initilizePieces();
     void updatePressures(uint8_t (*pressures)[BOARD_MATRIX_SIZE] = nullptr);
@@ -48,11 +50,13 @@ private:
     uint8_t fillCrossMoves(ChessPiece piece, Move *moves, \
                            bool pressureChecking = false);
     void makeMove(Move move, bool turnSide = true);
-    void undoLastMove(bool turnSide = true);
     // ai functions
     void makeAIMove();
     int getRating(bool maximizing);
     int minimax(int depth, int alpha, int beta, bool maximizing);
+
+    // notation and game over functions
+    QString getNotation(Move *move);
     void gameOver();
 
     Stack<Move> *movePool;

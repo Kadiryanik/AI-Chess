@@ -26,6 +26,13 @@ ChessGui::ChessGui(QWidget *parent)
     this->setFixedSize(this->geometry().width(), this->geometry().height());
 
     chessBoard = new ChessBoard(this);
+
+    ui->notationTable->setRowCount(0);
+    ui->notationTable->setColumnCount(2);
+    ui->notationTable->setHorizontalHeaderItem(0, \
+                                               new QTableWidgetItem("White"));
+    ui->notationTable->setHorizontalHeaderItem(1, \
+                                               new QTableWidgetItem("Black"));
 }
 
 /*---------------------------------------------------------------------------*/
@@ -35,3 +42,28 @@ ChessGui::~ChessGui()
     delete ui;
 }
 
+/*---------------------------------------------------------------------------*/
+void ChessGui::setNotation(QString notation, bool side)
+{
+    if(side == SIDE_WHITE){
+        int row = ui->notationTable->rowCount();
+        ui->notationTable->setRowCount(row + 1);
+        QTableWidgetItem *item = new QTableWidgetItem(notation);
+        ui->notationTable->setItem(row, 0, item);
+    } else{
+        QTableWidgetItem *item = new QTableWidgetItem(notation);
+        ui->notationTable->setItem(ui->notationTable->rowCount() - 1, 1, \
+                                   item);
+    }
+
+    ui->notationTable->scrollToBottom();
+}
+
+/*---------------------------------------------------------------------------*/
+void ChessGui::on_undoButton_clicked()
+{
+    chessBoard->undoLastMove(); // black
+    chessBoard->undoLastMove(); // white
+    chessBoard->repaint();
+    ui->notationTable->removeRow(ui->notationTable->rowCount() - 1);
+}
